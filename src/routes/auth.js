@@ -1,13 +1,18 @@
 const express = require('express');
 const router = express.Router();
 
-// PLACEHOLDERS 
 router.post('/signup', (req, res) => {
-  res.status(501).json({ message: 'Signup endpoint not implemented yet (Member 2 & 3)' });
+  res.status(501).json({
+    message: 'Signup: placeholder Judi, Marlin',
+    note: 'User model + password hashing + JWT'
+  });
 });
 
 router.post('/login', (req, res) => {
-  res.status(501).json({ message: 'Login endpoint not implemented yet (Member 3)' });
+  res.status(501).json({
+    message: 'Login: Placeholder Judii',
+    note: 'JWT token generation'
+  });
 });
 
 module.exports = router;
