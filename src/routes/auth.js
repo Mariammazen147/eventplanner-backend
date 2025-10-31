@@ -1,3 +1,5 @@
+import {login} from '../controllers/authController.js';
+
 const express = require('express');
 const router = express.Router();
 
@@ -8,11 +10,6 @@ router.post('/signup', (req, res) => {
   });
 });
 
-router.post('/login', (req, res) => {
-  res.status(501).json({
-    message: 'Login: Placeholder Judii',
-    note: 'JWT token generation'
-  });
-});
+router.post('/login', login);
 
 module.exports = router;
