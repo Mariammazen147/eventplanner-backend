@@ -21,12 +21,6 @@ This is the backend for the EventPlanner project, implemented in Node.js with Ex
 3. Create .env from example:
    cp .env.example .env
 
-   Edit .env:
-   PORT=3000
-   MONGODB_URI=mongodb+srv://root:987654321@eventplanner.usknbsb.mongodb.net/eventplanner?retryWrites=true&w=majority
-   JWT_SECRET=5c137a388fc14af89845c736c23e7943a3c147c200cbd577377bc8a6308f222df0ef66f55f483373ab04213f4ddddee29bce5b307fda8c871e74eaa5505ed488
-   NODE_ENV=development
-
 4. Run the server:
    npm run dev
 
@@ -56,7 +50,6 @@ This is the backend for the EventPlanner project, implemented in Node.js with Ex
 - Passwords hashed with bcrypt
 - JWT tokens (7-day expiry)
 - .env NEVER committed (in .gitignore)
-- .env removed from Git history if leaked
 
 ## Testing
 Use Postman:
@@ -64,11 +57,3 @@ Use Postman:
 - Signup: 201 + user saved
 - Login: JWT token
 - Validation: 400 on invalid input
-
-## Notes for TA
-- Phase 0: Sign up + Login ONLY
-- All commits before 31st October 2025
-- TA added as collaborator
-- Postman collection + .txt file submitted
-
-Project ready for Phase 1.
