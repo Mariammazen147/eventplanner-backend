@@ -10,6 +10,7 @@ app.use(express.json());
 connectDB();
 
 app.use('/api/auth', require('./routes/auth'));
+app.use('/api/events', require('./routes/event'));
 
 app.get('/health', (req, res) => {
   res.json({ status: 'OK', message: 'Phase 0 COMPLETE', mongo: 'CONNECTED' });
