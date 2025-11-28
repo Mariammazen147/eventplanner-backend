@@ -7,7 +7,8 @@ const {
   getInvitedEvents,
   getAllEvents,
   getEventById,
-  updateEvent
+  updateEvent,
+  searchEvents
 } = require('../controllers/eventController');
 
 const router = express.Router();
@@ -18,7 +19,8 @@ router.get('/:id([0-9a-fA-F]{24})', getEventById);
 router.use(protect);
 
 router.get('/organized', getOrganizedEvents);     
-router.get('/invited', getInvitedEvents);         
+router.get('/invited', getInvitedEvents);     
+router.get('/search', searchEvents);    
 
 router.post('/', createEvent);
 router.put('/:id', updateEvent);

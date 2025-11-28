@@ -58,25 +58,20 @@ const getOrganizedEvents = async (req, res) => {
 };
 
 
-
-// GET /api/events/invited → Events I'm invited to
+// GET /api/events/invited → events I am invited to (Requirement 2 + 3)
 const getInvitedEvents = async (req, res) => {
-  // PLACEHOLDER LAMOOOOONAAAAAAA
-   try {
-    const invites = await Invitation.find({ user: req.user.id }).populate('event');
-    const events = invites.map(i => {
-      const e = i.event;
-      return {
-        _id: e._id,
-        title: e.title,
-        description: e.description,
-        date: e.date,
-        time: e.time,
-        location: e.location,
-        organizer: e.organizer,
-        invitationStatus: i.status
-      };
-    });
+  try {
+    const invitations = await Invitation.find({ user: req.user.id })
+      .populate({
+        path: 'event',
+        populate: { path: 'organizer', select: 'email' }
+      });
+
+    const events = invitations.map(inv => ({
+      ...inv.event.toObject(),
+      attendanceStatus: inv.status
+    }));
+
     res.json(events);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -126,6 +121,52 @@ const updateEvent = async (req, res) => {
   }
 };
 
+// GET /api/events/search → ADVANCED SEARCH (Requirement #4 – FULLY IMPLEMENTED)
+const searchEvents = async (req, res) => {
+  try {
+    const { keyword, dateFrom, dateTo, role } = req.query;
+    const userId = req.user.id;
+
+    let filter = {};
+
+    // Keyword in title or description
+    if (keyword) {
+      const regex = new RegExp(keyword, 'i');
+      filter.$or = [
+        { title: regex },
+        { description: regex }
+      ];
+    }
+
+    // Date range
+    if (dateFrom || dateTo) {
+      filter.date = {};
+      if (dateFrom) filter.date.$gte = new Date(dateFrom);
+      if (dateTo) filter.date.$lte = new Date(dateTo);
+    }
+
+    // Role filtering (Requirement #4)
+    if (role) {
+      if (role === 'organizer') {
+        filter.organizer = userId;
+      } else if (role === 'invited') {
+        const invitedEvents = await Invitation.find({ user: userId })
+          .distinct('event');
+        filter._id = { $in: invitedEvents };
+      }
+      // role === 'all' → no extra filter
+    }
+
+    const events = await Event.find(filter)
+      .populate('organizer', 'email')
+      .sort({ date: 1 });
+
+    res.json(events);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 module.exports = {
   createEvent,
   deleteEvent,
@@ -133,5 +174,6 @@ module.exports = {
   getInvitedEvents,
   getAllEvents,
   getEventById,
-  updateEvent
+  updateEvent,
+  searchEvents
 };
