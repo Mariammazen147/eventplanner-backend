@@ -11,6 +11,8 @@ connectDB();
 
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/events', require('./routes/event'));
+app.use('/api/invitations', require('./routes/invitation'));
+
 
 app.get('/health', (req, res) => {
   res.json({ status: 'OK', message: 'Phase 0 COMPLETE', mongo: 'CONNECTED' });

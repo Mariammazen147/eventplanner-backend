@@ -1,4 +1,6 @@
 const Event = require('../models/Event');
+const Invitation = require('../models/Invitations');
+
 
 // POST /api/events - Create event
 const createEvent = async (req, res) => {
@@ -55,10 +57,30 @@ const getOrganizedEvents = async (req, res) => {
   }
 };
 
+
+
 // GET /api/events/invited → Events I'm invited to
 const getInvitedEvents = async (req, res) => {
   // PLACEHOLDER LAMOOOOONAAAAAAA
-  res.json([]);
+   try {
+    const invites = await Invitation.find({ user: req.user.id }).populate('event');
+    const events = invites.map(i => {
+      const e = i.event;
+      return {
+        _id: e._id,
+        title: e.title,
+        description: e.description,
+        date: e.date,
+        time: e.time,
+        location: e.location,
+        organizer: e.organizer,
+        invitationStatus: i.status
+      };
+    });
+    res.json(events);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 };
 
 // GET /api/events → All events (public)
