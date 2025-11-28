@@ -12,7 +12,7 @@ This is the backend for the EventPlanner project, implemented in Node.js with Ex
 ## Setup Instructions
 
 1. Clone the repo:
-   git clone https://github.com/your-username/eventplanner-backend.git
+   git clone https://github.com/Mariammazen147/eventplanner-backend.git
    cd eventplanner-backend
 
 2. Install dependencies:
