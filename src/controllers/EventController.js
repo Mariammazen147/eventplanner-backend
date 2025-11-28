@@ -45,4 +45,71 @@ const deleteEvent = async (req, res) => {
   }
 };
 
-module.exports = { createEvent, deleteEvent };
+// GET /api/events/organized → My organized events
+const getOrganizedEvents = async (req, res) => {
+  try {
+    const events = await Event.find({ organizer: req.user.id }).sort({ date: -1 });
+    res.json(events);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// GET /api/events/invited → Events I'm invited to
+const getInvitedEvents = async (req, res) => {
+  // PLACEHOLDER LAMOOOOONAAAAAAA
+  res.json([]);
+};
+
+// GET /api/events → All events (public)
+const getAllEvents = async (req, res) => {
+  try {
+    const events = await Event.find().sort({ date: -1 });
+    res.json(events);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// GET /api/events/:id → Event details
+const getEventById = async (req, res) => {
+  try {
+    const event = await Event.findById(req.params.id);
+    if (!event) return res.status(404).json({ error: 'Event not found' });
+    res.json(event);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// PUT /api/events/:id → Update event (only organizer)
+const updateEvent = async (req, res) => {
+  try {
+    const event = await Event.findById(req.params.id);
+    if (!event) return res.status(404).json({ error: 'Event not found' });
+
+    if (event.organizer.toString() !== req.user.id) {
+      return res.status(403).json({ error: 'Only organizer can update this event' });
+    }
+
+    const updatedEvent = await Event.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true, runValidators: true }
+    );
+
+    res.json({ success: true, event: updatedEvent });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+module.exports = {
+  createEvent,
+  deleteEvent,
+  getOrganizedEvents,
+  getInvitedEvents,
+  getAllEvents,
+  getEventById,
+  updateEvent
+};

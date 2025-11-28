@@ -1,13 +1,27 @@
 const express = require('express');
 const { protect } = require('../middleware/auth');
-const { createEvent, deleteEvent } = require('../controllers/EventController');
+const {
+  createEvent,
+  deleteEvent,
+  getOrganizedEvents,
+  getInvitedEvents,
+  getAllEvents,
+  getEventById,
+  updateEvent
+} = require('../controllers/eventController');
 
 const router = express.Router();
 
-// All routes below require login
+router.get('/', getAllEvents);                    
+router.get('/:id([0-9a-fA-F]{24})', getEventById); 
+
 router.use(protect);
 
+router.get('/organized', getOrganizedEvents);     
+router.get('/invited', getInvitedEvents);         
+
 router.post('/', createEvent);
+router.put('/:id', updateEvent);
 router.delete('/:id', deleteEvent);
 
 module.exports = router;
