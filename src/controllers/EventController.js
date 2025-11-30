@@ -58,7 +58,7 @@ const getOrganizedEvents = async (req, res) => {
 };
 
 
-// GET /api/events/invited → events I am invited to (Requirement 2 + 3)
+// GET /api/events/invited → events I am invited to
 const getInvitedEvents = async (req, res) => {
   try {
     const invitations = await Invitation.find({ user: req.user.id })
@@ -121,7 +121,7 @@ const updateEvent = async (req, res) => {
   }
 };
 
-// GET /api/events/search → ADVANCED SEARCH (Requirement #4 – FULLY IMPLEMENTED)
+// GET /api/events/search → ADVANCED SEARCH
 const searchEvents = async (req, res) => {
   try {
     const { keyword, dateFrom, dateTo, role } = req.query;
