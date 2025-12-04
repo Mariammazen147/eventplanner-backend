@@ -58,23 +58,29 @@ const getOrganizedEvents = async (req, res) => {
 };
 
 
-// GET /api/events/invited → events I am invited to (Requirement 2 + 3)
+// GET /api/events/invited
 const getInvitedEvents = async (req, res) => {
   try {
     const invitations = await Invitation.find({ user: req.user.id })
       .populate({
         path: 'event',
-        populate: { path: 'organizer', select: 'email' }
-      });
+        populate: { path: 'organizer', select: 'name email' }
+      })
+      .lean(); 
 
-    const events = invitations.map(inv => ({
-      ...inv.event.toObject(),
-      attendanceStatus: inv.status
-    }));
+    const events = invitations
+      .filter(inv => inv.event !== null)  
+      .map(inv => ({
+        ...inv.event,
+        attendanceStatus: inv.status === 'going' ? 'Going' :
+                          inv.status === 'maybe' ? 'Maybe' :
+                          inv.status === 'notgoing' ? 'Not Going' : 'Pending'
+      }));
 
     res.json(events);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('getInvitedEvents error:', err);
+    res.status(500).json({ error: 'Server error' });
   }
 };
 
@@ -145,7 +151,7 @@ const searchEvents = async (req, res) => {
       if (dateTo) filter.date.$lte = new Date(dateTo);
     }
 
-    // Role filtering (Requirement #4)
+    // Role filtering 
     if (role) {
       if (role === 'organizer') {
         filter.organizer = userId;
@@ -154,12 +160,11 @@ const searchEvents = async (req, res) => {
           .distinct('event');
         filter._id = { $in: invitedEvents };
       }
-      // role === 'all' → no extra filter
     }
 
     const events = await Event.find(filter)
-      .populate('organizer', 'email')
-      .sort({ date: 1 });
+    .populate({ path: 'organizer', select: 'name email' })
+    .sort({ date: 1 });
 
     res.json(events);
   } catch (err) {

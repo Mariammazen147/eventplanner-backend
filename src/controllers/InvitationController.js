@@ -61,15 +61,22 @@ const getEventAttendees = async (req, res) => {
   try {
     const { eventId } = req.params;
     const invitations = await Invitation.find({ event: eventId })
-      .populate('user', 'email _id')
+      .populate('user', 'name email _id')
+      .select('status user')
       .lean();
 
-    const response = invitations.map(i => ({
-      user: i.user,
-      status: i.status
+    const attendees = invitations.map(inv => ({
+      user: {
+        _id: inv.user._id,
+        name: inv.user.name || inv.user.email.split('@')[0], // fallback if name missing
+        email: inv.user.email
+      },
+      status: inv.status === 'going' ? 'Going' :
+              inv.status === 'maybe' ? 'Maybe' :
+              inv.status === 'notgoing' ? 'Not Going' : 'Pending'
     }));
 
-    res.json(response);
+    res.json(attendees);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
