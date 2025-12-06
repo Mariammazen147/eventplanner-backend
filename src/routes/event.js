@@ -9,18 +9,18 @@ const {
   getEventById,
   updateEvent,
   searchEvents
-} = require('../controllers/eventController');
+} = require('../controllers/EventController');
 
 const router = express.Router();
 
-router.get('/', getAllEvents);                    
-router.get('/:id([0-9a-fA-F]{24})', getEventById); 
+router.get('/', getAllEvents);
+router.get('/:id([0-9a-fA-F]{24})', getEventById);
 
 router.use(protect);
 
-router.get('/organized', getOrganizedEvents);     
-router.get('/invited', getInvitedEvents);     
-router.get('/search', searchEvents);    
+router.get('/organized', getOrganizedEvents);
+router.get('/invited', getInvitedEvents);
+router.get('/search', searchEvents);
 
 router.post('/', createEvent);
 router.put('/:id', updateEvent);
