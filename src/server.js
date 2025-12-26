@@ -9,6 +9,8 @@ app.use(express.json());
 
 connectDB();
 
+app.get('/', (req, res) => res.send('Backend is working!'));
+
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/events', require('./routes/event'));
 app.use('/api/invitations', require('./routes/invitation'));
